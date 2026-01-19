@@ -125,6 +125,66 @@ bool sortDate(Restaurant one, Restaurant two, bool ascending) {
     return false;
 }
 
+/**
+ * Returns a new list that only includes the type of food
+ * @param list list of restaurants 
+ * @param sort sorting method (type)
+ * @param category the type of food used to sort
+ * @return new list of only restaurants from that have that food type
+ */
+vector<Restaurant> sortCategory(vector<Restaurant>& list, Sort sort, Type type) {
+    vector<Restaurant> newList;
+    int n = list.size();
+    if (sort == Sort::FoodType) {
+        for (int i = 0; i < n; i++) {
+            if (list[i].type == type) {
+                newList.push_back(list[i]);
+            }
+        }
+    }
+    return newList;
+}
+
+/**
+ * Returns a new list that only includes the city or state
+ * @param list list of restaurants 
+ * @param sort sorting method (city or state)
+ * @param category the city or state being used to sort
+ * @return new list of only restaurants from that city or state
+ */
+vector<Restaurant> sortCategory(vector<Restaurant>& list, Sort sort, string category) {
+    vector<Restaurant> newList;
+    int n = list.size();
+    switch(sort) {
+        case(Sort::City):
+            for (int i = 0; i < n; i++) {
+                if (list[i].city.compare(category) == 0) {
+                    newList.push_back(list[i]);
+                }
+            }
+            break;
+        case(Sort::State):
+            for (int i = 0; i < n; i++) {
+                if (list[i].state.compare(category) == 0) {
+                    newList.push_back(list[i]);
+                }
+            }
+            break;
+        default:
+            exit(1);
+    }
+
+    return newList;
+}
+
+/**
+ * Merges two vectors together.
+ * @param arr array being sorted with the merging
+ * @param left index of start of left array
+ * @param mid index imbetween left and right array
+ * @param right index of end of right array
+ * @param sort sorting method used when merging
+ */
 void merge(vector<Restaurant>& arr, int left, int mid, int right, Sort sort) {
     int n1 = mid - left + 1; // length of first subarray
     int n2 = right - mid; // length of the second subarray
@@ -195,6 +255,13 @@ void merge(vector<Restaurant>& arr, int left, int mid, int right, Sort sort) {
     }
 }
 
+/**
+ * Sorting algorithm that splits vectors then merges them back together.
+ * @param arr vector being sorted
+ * @param left index of beginning of left array
+ * @param right index of end of right array
+ * @param sort sorting method used when splitting and merging
+ */
 void mergeSort(vector<Restaurant>& arr, int left, int right, Sort sort) {
     // if left index greater than or equal to right, stop immediately
     if (left >= right) {
@@ -232,11 +299,83 @@ vector<Restaurant> readInputFile() {
         while (getline(linestream, value, ',')) {
             values.push_back(value);
         }
-        Type type = getType(values[1]);
-        float rating = stof(values[2]);
+        int id = stoi(values[0]);
+        Type type = getType(values[2]);
+        float rating = stof(values[3]);
         // Adds restaurant to list
-        restaurants.push_back({values[0], type, rating, values[3], values[4], values[5], values[6]});
+        restaurants.push_back({id, values[1], type, rating, values[4], values[5], values[6], values[7]});
     }
 
     return restaurants;
+}
+
+/**
+ * Writes restaurants to the restaurants.csv file.
+ * This is used when removing a restaurant and when editing parts of a restaurant.
+ * @param list list of restaurants being written to output file
+ */
+void writeOutputFile(vector<Restaurant> list) {
+    ofstream output("restaurants.csv");
+    if (!output.is_open()) {
+        cerr << "Error opening output file!" << endl;
+        exit(1);
+    }
+    int n = list.size();
+    for (int i = 0 ; i < n; i++) {
+        output << list[i].outputString() << endl;
+    }
+}
+
+/**
+ * Adds a new restaurant to the restaurants.csv file
+ * @param r restaurant being added
+ */
+void addNewRestaurant(Restaurant r) {
+    ofstream output("restaurants.csv", std::ios::app); 
+        // "std::ios::app" tells it to add to the end of the file
+    if (!output.is_open()) {
+        cerr << "Error opening output file!" << endl;
+        exit(1);
+    }
+    output << r.outputString();
+}
+
+/**
+ * Removes a restaurant from the list by rewriting restaurants.csv without the restaurant.
+ * @param removeId id of the restaurant being removed
+ */
+void removeRestaurant(int removeId) {
+    ifstream input("restaurants.csv");
+    // Checks if input file was opened.
+    if (!input.is_open()) {
+        cerr << "Error opening input file!" << endl;
+        exit(1);
+    }
+
+    // Line being read
+    string line;
+    // Value being read from the line
+    string value;
+    // List of restaurants, vector is used since it is dynamic
+    vector<Restaurant> restaurants;
+    int interval = 0;
+    while (getline(input, line)) {
+        vector<string> values;
+        stringstream linestream(line);
+        // Uses comma delimiter to extract data
+        while (getline(linestream, value, ',')) {
+            values.push_back(value);
+        }
+        int id = stoi(values[0]) - interval;
+        if (id == removeId) {
+            interval = 1;
+            continue;
+        }
+        Type type = getType(values[2]);
+        float rating = stof(values[3]);
+        // Adds restaurant to list
+        restaurants.push_back({id, values[1], type, rating, values[4], values[5], values[6], values[7]});
+    }
+
+    writeOutputFile(restaurants);
 }

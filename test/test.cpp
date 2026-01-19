@@ -3,8 +3,8 @@
 #include "../src/restaurant.hpp"
 #include "../src/functions.hpp"
 
-Restaurant r = {"Example", Type::Mexican, 1.2, "01/02/2003", "Food", "City", "ST"};
-Restaurant r2 = {"Another", Type::Japanese, 3.4, "04/05/2006", "Drink", "County", "TS"};
+Restaurant r = {1, "Example", Type::Mexican, 1.2, "01/02/2003", "Food", "City", "ST"};
+Restaurant r2 = {2, "Another", Type::Japanese, 3.4, "04/05/2006", "Drink", "County", "TS"};
 
 TEST_CASE("Getting day works", "[integer]") {
     REQUIRE(r.getDay() == 2);
@@ -60,10 +60,10 @@ TEST_CASE("Date boolean check works", "[alphabet]") {
 TEST_CASE("Merge sort works", "[merge]") {
     /**
      * Date for reference:
-     * Golden Dragon,Chinese,4.27,01/16/26,Honey Chicken,Raleigh,NC
-     * Iso Iso Ramen,Japanese,4.15,12/04/25,Black Ramen,Raleigh,NC
-     * Daniel's,Italian,4.02,05/07/25,,Apex,NC
-     * Dos Amigo's,Mexican,4.12,01/06/26,Carnitas,Boone,NC
+     * 1,Golden Dragon,Chinese,4.27,01/16/26,Honey Chicken,Raleigh,NC
+     * 2,Iso Iso Ramen,Japanese,4.15,12/04/25,Black Ramen,Raleigh,NC
+     * 3,Daniel's,Italian,4.02,05/07/25,,Apex,NC
+     * 4,Dos Amigos,Mexican,4.12,01/06/26,Carnitas,Boone,NC
      */
     vector<Restaurant> arr = readInputFile();
     int n = arr.size();
@@ -80,10 +80,6 @@ TEST_CASE("Merge sort works", "[merge]") {
     REQUIRE(arr[0].name == "Iso Iso Ramen");
 
     mergeSort(arr, 0, n-1, Sort::Rating_Ascending);
-    // cout << arr[0].toString() << endl;
-    // cout << arr[1].toString() << endl;
-    // cout << arr[2].toString() << endl;
-    // cout << arr[3].toString() << endl;
     REQUIRE(arr[0].rating == 4.02f);
     REQUIRE(arr[1].rating == 4.12f);
     REQUIRE(arr[2].rating == 4.15f);
@@ -106,4 +102,60 @@ TEST_CASE("Merge sort works", "[merge]") {
     REQUIRE(arr[2].dateLastVisit == "12/04/2025");
     REQUIRE(arr[1].dateLastVisit == "01/06/2026");
     REQUIRE(arr[0].dateLastVisit == "01/16/2026");
+}
+
+TEST_CASE("Adding new restaurant", "[post]") {
+    Restaurant r = {5, "Another", Type::Japanese, 3.4, "04/05/2006", "Drink", "County", "TS"};
+    addNewRestaurant(r);
+    vector<Restaurant> list = readInputFile();
+    int n = list.size();
+    REQUIRE(list[n-1].id == 5);
+    REQUIRE(list[n-1].name == "Another");
+    REQUIRE(list[n-1].type == Type::Japanese);
+    REQUIRE(list[n-1].rating == 3.4f); // f is at end of number to make it a float
+    REQUIRE(list[n-1].dateLastVisit == "04/05/2006");
+    REQUIRE(list[n-1].favItem == "Drink");
+    REQUIRE(list[n-1].city == "County");
+    REQUIRE(list[n-1].state == "TS");
+}
+
+TEST_CASE("Removing restaurant with id", "[delete]") {
+    // Removes the added restaurant from the adding restaurant test case
+    vector<Restaurant> list = readInputFile();
+    REQUIRE(list.size() == 5);
+    removeRestaurant(5);
+    list = readInputFile();
+    REQUIRE(list.size() == 4);
+}
+
+TEST_CASE("Writing to output file", "[write]") {
+    vector<Restaurant> list = readInputFile();
+    vector<Restaurant> tempList;
+    tempList.push_back(r);
+    writeOutputFile(tempList);
+    vector<Restaurant> newList = readInputFile();
+    REQUIRE(newList.size() == 1);
+    writeOutputFile(list);
+    newList = readInputFile();
+    REQUIRE(newList.size() == 4);
+}
+
+TEST_CASE("Sorting by type, city, and state ", "[category]") {
+    vector<Restaurant> list = readInputFile();
+    vector<Restaurant> newList = sortCategory(list, Sort::FoodType, Type::Mexican);
+    REQUIRE(newList.size() == 1);
+    REQUIRE(newList[0].type == Type::Mexican);
+    REQUIRE(newList[0].name == "Dos Amigos");
+
+    newList = sortCategory(list, Sort::City, "Raleigh");
+    REQUIRE(newList.size() == 2);
+    REQUIRE(newList[0].city == "Raleigh");
+    REQUIRE(newList[1].city == "Raleigh");
+
+    newList = sortCategory(list, Sort::State, "NC");
+    REQUIRE(newList.size() == 4);
+    REQUIRE(newList[0].state == "NC");
+    REQUIRE(newList[1].state == "NC");
+    REQUIRE(newList[2].state == "NC");
+    REQUIRE(newList[3].state == "NC");
 }

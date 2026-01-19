@@ -4,6 +4,7 @@
 #include<iostream>
 #include<string>
 #include<ctime>
+#include<format>    
 
 using namespace std;
 
@@ -38,6 +39,8 @@ enum class Type {
  * Uses to represent a restaurant. 
  */
 struct Restaurant {
+    // Id of restaurant
+    int id;
     // Name of restaurant
     string name;
     // Type of food at restaurant
@@ -91,6 +94,11 @@ struct Restaurant {
     string toString() {
         return "Name: " + name + "\nType: " + typeToString() + "\nRating: " + to_string(rating) +
                 "\nDate: " + dateLastVisit + "\nFav: " + favItem + "\nCity and State: " + city + ", " + state;
+    }
+
+    string outputString() {
+        return to_string(id) + "," + name + "," + typeToString() + "," + to_string(rating).substr(0,4) +
+                "," + dateLastVisit + "," + favItem + "," + city + "," + state;
     }
 };
 

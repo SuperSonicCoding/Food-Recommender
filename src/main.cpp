@@ -5,6 +5,6 @@
  * Main function.
  */
 int main() {
-    
+    vector<Restaurant> restaurants = readInputFile();
     return 0;
 }
