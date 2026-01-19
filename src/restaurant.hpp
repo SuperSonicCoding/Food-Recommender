@@ -8,6 +8,21 @@
 using namespace std;
 
 /**
+ * The different ways to sort the list of restaurants.
+ */
+enum class Sort {
+    Alphabetical_Ascending,
+    Alphabetical_Descending,
+    Rating_Ascending,
+    Rating_Descending,
+    Date_Ascending,
+    Date_Descending,
+    FoodType,
+    City,
+    State,
+};
+
+/**
  * The type of food the restaurant serves.
  *      !!! Add more later
  */
@@ -16,6 +31,7 @@ enum class Type {
     Italian,
     Japanese,
     Mexican,
+    None,
 };
 
 /**
@@ -38,11 +54,11 @@ struct Restaurant {
     string state;
 
     int getDay() {
-        return stoi(dateLastVisit.substr(0,2));
+        return stoi(dateLastVisit.substr(3));
     }
 
     int getMonth() {
-        return stoi(dateLastVisit.substr(3));
+        return stoi(dateLastVisit.substr(0,2));
     }
 
     int getYear() {
@@ -52,6 +68,30 @@ struct Restaurant {
         // cout << "Time: " << nowLocal << endl;
         // return 0;
     };
+
+    string typeToString() {
+        switch(type) {
+            case Type::Chinese:
+                return "Chinese";
+                break;
+            case Type::Japanese:
+                return "Japanese";
+                break;
+            case Type::Italian:
+                return "Italian";
+                break;
+            case Type::Mexican:
+                return "Mexican";
+                break;
+            default:
+                return "none";
+        }
+    }
+
+    string toString() {
+        return "Name: " + name + "\nType: " + typeToString() + "\nRating: " + to_string(rating) +
+                "\nDate: " + dateLastVisit + "\nFav: " + favItem + "\nCity and State: " + city + ", " + state;
+    }
 };
 
 #endif

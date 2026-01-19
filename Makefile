@@ -15,6 +15,7 @@ TARGET = $(SRC)main
 # Deletes target
 TARGET_DEL = $(SRC)main.exe
 
+# Target test executable
 TARGET_TEST = $(TEST)test
 
 # Sources files
@@ -28,7 +29,11 @@ OBJS = $(patsubst $(SRC)%.cpp, $(OBJ)%.o, $(SRCS))
 # 	Within <text>, it will replace anything matching <pattern> with <replacement>
 # 	It transforms a list of .cpp files in src/ into a list of .o files in obj/
 
-TESTS = $(wildcard $(TEST)%.cpp)
+# Test source files
+TEST_SRCS = $(wildcard $(TEST)*.cpp) $(SRC)functions.cpp
+
+# Test object files
+TEST_OBJS = $(patsubst $(TEST)%.cpp, $(OBJ)%.o, $(TEST_SRCS))
 
 # Default rule to build and run executable
 all: $(TARGET) run
@@ -47,6 +52,12 @@ run: $(TARGET)
 
 test: $(TARGET_TEST)
 	$(TARGET_TEST)
+
+$(TARGET_TEST): $(OBJS) $(TEST_OBJS)
+	$(CXX) $(CXXFLAGS) -o $(TARGET_TEST) $(TEST_OBJS)
+
+$(OBJ)%.o: $(TEST)%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Rule to clean by removing generated files
 clean:
