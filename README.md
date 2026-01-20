@@ -1,2 +1,2 @@
-# Food-Reccommender
+# Food-Recommender
 A program that takes in a csv file of restaurant data to list so that the user can make decisions based on that data. This data includes the name, food type, rating, date last visited, favorite item, city, and state. Right now I go out to eat weekly with friends and sometimes have trouble keeping up with where I have and haven't been. I thought this would be a good project to learn C++ for one of my courses and to help me the next time I have to choose where my friends and I are going to go eat.
