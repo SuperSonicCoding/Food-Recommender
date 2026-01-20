@@ -379,3 +379,44 @@ void removeRestaurant(int removeId) {
 
     writeOutputFile(restaurants);
 }
+
+/**
+ * List out all of the restaurants in the order given in the list.
+ * @param list list of restaurants
+ */
+void listRestaurants(vector<Restaurant> list) {
+    // header
+    cout << "|" << left << setw(NAME_WIDTH) << "Restaurant Name" << "|" << setw(TYPE_WIDTH) << "Food Type" << "|"
+         << setw(RATING_WIDTH) << "Rating" << "|" << setw(DATE_WIDTH) << "Last Visited" << "|"
+         << setw(FAV_ITEM_WIDTH) << "Favorite Item" << "|" << setw(CITY_WIDTH) << "City" << "|"
+         << setw(STATE_WIDTH) << "State" << "|" << endl;
+    // seperator between header and data
+    cout << "|" << setfill('-') << setw(NAME_WIDTH) << "" << "|" << setw(TYPE_WIDTH) << "" << "|"
+         << setw(RATING_WIDTH) << "" << "|" << setw(DATE_WIDTH) << "" << "|"
+         << setw(FAV_ITEM_WIDTH) << "" << "|" << setw(CITY_WIDTH) << "" << "|"
+         << setw(STATE_WIDTH) << "" << "|" << setfill(' ') << endl;
+    // list out all data on restaurants
+    int n = list.size();
+    for (int i = 0; i < n; i++) {
+        cout << "|" << left << setw(NAME_WIDTH) << list[i].name << "|" << setw(TYPE_WIDTH) << list[i].typeToString() << "|"
+            << setw(RATING_WIDTH) << setprecision(3) << list[i].rating << "|" << setw(DATE_WIDTH) << list[i].dateLastVisit << "|"
+            << setw(FAV_ITEM_WIDTH) << list[i].favItem << "|" << setw(CITY_WIDTH) << list[i].city << "|"
+            << setw(STATE_WIDTH) << list[i].state << "|" << endl;
+    }
+}
+
+// should overload with a type and float version
+void promptUser(string infoMessage, int threshold, string prompt, string warning, string& field) {
+    bool inputValid = false;
+    while (!inputValid) {
+        cout << infoMessage << threshold << endl;
+        cout << right << setw(15) << prompt << " ";
+        cin >> field;
+        int length = field.length();
+        if (length > threshold) {
+            cout << warning << endl << endl;
+        } else {
+            inputValid = true;
+        }
+    }
+}
